@@ -26,6 +26,7 @@
     .status { margin-top: 16px; font-size: 14px; text-align: center; min-height: 20px; }
     .success { color: #10b981; }
     .error { color: #ef4444; }
+    .info { color: #38bdf8; font-weight: bold; background: #0f172a; padding: 10px; border-radius: 6px; border: 1px dashed #38bdf8; margin-bottom: 15px; }
     .hidden { display: none !important; }
 
     .dashboard { text-align: center; }
@@ -57,13 +58,13 @@
           <input type="text" id="fullname" placeholder="Ahmet Yılmaz">
         </div>
 
-        <!-- Kullanıcı Adı (Ortak) -->
+        <!-- Kullanıcı Adı -->
         <div class="form-group" id="group-username">
           <label for="username">Kullanıcı Adı</label>
           <input type="text" id="username" placeholder="cizreli73">
         </div>
 
-        <!-- Telefon Numarası (Kayıt ve Şifre Sıfırlama) -->
+        <!-- Telefon Numarası -->
         <div class="form-group hidden" id="group-phone">
           <label for="phone">Telefon Numarası</label>
           <input type="text" id="phone" placeholder="05xxxxxxxxx">
@@ -75,13 +76,21 @@
           <input type="password" id="password" placeholder="******">
         </div>
 
-        <!-- Yeni Şifre (Şifremi Unuttum) -->
-        <div class="form-group hidden" id="group-new-password">
-          <label for="new-password">Yeni Şifre</label>
-          <input type="password" id="new-password" placeholder="Yeni Şifrenizi Girin">
-        </div>
-
         <button class="main-btn" id="submit-btn" onclick="handleAuth()">Giriş Yap</button>
+      </div>
+
+      <!-- KOD DOĞRULAMA VE ŞİFRE YENİLEME ALANI (Şifremi Unuttum Adım 2) -->
+      <div id="verify-reset-box" class="hidden">
+        <div id="code-info-box" class="info hidden"></div>
+        <div class="form-group">
+          <label for="reset-code">Telefonunuza Gelen 6 Haneli Kod</label>
+          <input type="text" id="reset-code" maxlength="6" placeholder="123456" style="text-align: center; letter-spacing: 6px; font-weight: bold;">
+        </div>
+        <div class="form-group">
+          <label for="new-password">Yeni Şifreniz</label>
+          <input type="password" id="new-password" placeholder="Yeni şifrenizi girin">
+        </div>
+        <button class="main-btn" onclick="verifyCodeAndResetPassword()">Şifreyi Onayla ve Değiştir</button>
       </div>
     </div>
 
@@ -105,10 +114,14 @@
 
   <script>
     let currentMode = 'login';
+    let generatedSmsCode = '';
+    let targetResetUser = null;
 
     function switchMode(mode) {
       currentMode = mode;
       document.getElementById('status').innerText = '';
+      document.getElementById('verify-reset-box').classList.add('hidden');
+      document.getElementById('form-content').classList.remove('hidden');
       
       const tabLogin = document.getElementById('tab-login');
       const tabRegister = document.getElementById('tab-register');
@@ -118,7 +131,6 @@
       const gUsername = document.getElementById('group-username');
       const gPhone = document.getElementById('group-phone');
       const gPassword = document.getElementById('group-password');
-      const gNewPassword = document.getElementById('group-new-password');
       
       const subtitle = document.getElementById('form-subtitle');
       const submitBtn = document.getElementById('submit-btn');
@@ -133,7 +145,6 @@
         gUsername.classList.remove('hidden');
         gPhone.classList.add('hidden');
         gPassword.classList.remove('hidden');
-        gNewPassword.classList.add('hidden');
         subtitle.innerText = 'Hesabınıza giriş yapmak için bilgilerinizi girin.';
         submitBtn.innerText = 'Giriş Yap';
       } else if (mode === 'register') {
@@ -142,7 +153,6 @@
         gUsername.classList.remove('hidden');
         gPhone.classList.remove('hidden');
         gPassword.classList.remove('hidden');
-        gNewPassword.classList.add('hidden');
         subtitle.innerText = 'Yeni hesap oluşturmak için formu doldurun.';
         submitBtn.innerText = 'Kayıt Ol';
       } else if (mode === 'reset') {
@@ -151,9 +161,8 @@
         gUsername.classList.remove('hidden');
         gPhone.classList.remove('hidden');
         gPassword.classList.add('hidden');
-        gNewPassword.classList.remove('hidden');
-        subtitle.innerText = 'Kullanıcı adı ve kayıtlı telefon numaranızı girerek şifrenizi yenileyin.';
-        submitBtn.innerText = 'Şifreyi Güncelle';
+        subtitle.innerText = 'Şifrenizi sıfırlamak için kullanıcı adı ve telefonunuzu girin.';
+        submitBtn.innerText = 'Doğrulama Kodu Gönder';
       }
     }
 
@@ -182,12 +191,11 @@
       } else if (currentMode === 'reset') {
         const username = document.getElementById('username').value.trim();
         const phone = document.getElementById('phone').value.trim();
-        const newPassword = document.getElementById('new-password').value.trim();
         const savedUserJson = localStorage.getItem('cizre_user');
 
-        if (!username || !phone || !newPassword) {
+        if (!username || !phone) {
           statusDiv.className = 'status error';
-          statusDiv.innerText = 'Lütfen Kullanıcı Adı, Telefon ve Yeni Şifreyi girin.';
+          statusDiv.innerText = 'Lütfen kullanıcı adı ve telefon numaranızı girin.';
           return;
         }
 
@@ -198,17 +206,26 @@
         }
 
         let user = JSON.parse(savedUserJson);
-        // Güvenlik Kontrolü: Hem kullanıcı adı hem de telefon birebir eşleşmeli
-        if (user.username === username && user.phone === phone) {
-          user.password = newPassword;
-          localStorage.setItem('cizre_user', JSON.stringify(user));
 
+        // Kullanıcı adı ve telefon eşleşiyor mu kontrol et
+        if (user.username === username && user.phone === phone) {
+          targetResetUser = user;
+          generatedSmsCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+          // SMS göndermek paralı olduğu için simüle edip ekranda gösteriyoruz (veya konsola basıyoruz)
           statusDiv.className = 'status success';
-          statusDiv.innerText = 'Şifreniz güncellendi! Yeni şifrenizle giriş yapabilirsiniz.';
-          switchMode('login');
+          statusDiv.innerText = 'Doğrulama kodu telefona gönderildi!';
+          
+          document.getElementById('form-content').classList.add('hidden');
+          document.getElementById('verify-reset-box').classList.remove('hidden');
+          
+          // Test kolaylığı için kodu ekranda bilgi olarak gösteriyoruz (SMS entegrasyonu olmadığından)
+          const infoBox = document.getElementById('code-info-box');
+          infoBox.classList.remove('hidden');
+          infoBox.innerHTML = `Simülasyon SMS Kodu: <strong style="font-size:18px; color:#f59e0b;">${generatedSmsCode}</strong>`;
         } else {
           statusDiv.className = 'status error';
-          statusDiv.innerText = 'Kullanıcı adı ile telefon numarası eşleşmiyor!';
+          statusDiv.innerText = 'Bu bilgilere ait kayıt bulunamadı veya bilgiler eşleşmiyor!';
         }
 
       } else {
@@ -238,6 +255,30 @@
           statusDiv.className = 'status error';
           statusDiv.innerText = 'Hatalı kullanıcı adı veya şifre!';
         }
+      }
+    }
+
+    function verifyCodeAndResetPassword() {
+      const inputCode = document.getElementById('reset-code').value.trim();
+      const newPassword = document.getElementById('new-password').value.trim();
+      const statusDiv = document.getElementById('status');
+
+      if (!inputCode || !newPassword) {
+        statusDiv.className = 'status error';
+        statusDiv.innerText = 'Lütfen doğrulama kodunu ve yeni şifrenizi girin.';
+        return;
+      }
+
+      if (inputCode === generatedSmsCode) {
+        targetResetUser.password = newPassword;
+        localStorage.setItem('cizre_user', JSON.stringify(targetResetUser));
+
+        statusDiv.className = 'status success';
+        statusDiv.innerText = 'Şifreniz başarıyla değiştirildi! Giriş yapabilirsiniz.';
+        switchMode('login');
+      } else {
+        statusDiv.className = 'status error';
+        statusDiv.innerText = 'Hatalı doğrulama kodu!';
       }
     }
 
