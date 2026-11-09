@@ -11,9 +11,8 @@
     h1 { color: #f59e0b; margin-bottom: 8px; font-size: 24px; text-align: center; }
     p.subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 24px; text-align: center; }
     
-    /* Sekmeler */
-    .mode-selector { display: flex; gap: 10px; margin-bottom: 24px; background: #0f172a; padding: 6px; border-radius: 10px; border: 1px solid #334155; }
-    .mode-btn { flex: 1; padding: 12px; border: none; background: transparent; color: #94a3b8; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; font-size: 14px; }
+    .mode-selector { display: flex; gap: 6px; margin-bottom: 24px; background: #0f172a; padding: 6px; border-radius: 10px; border: 1px solid #334155; }
+    .mode-btn { flex: 1; padding: 10px 4px; border: none; background: transparent; color: #94a3b8; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; font-size: 12px; }
     .mode-btn.active { background: #f59e0b; color: #0f172a; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); }
 
     .form-group { margin-bottom: 16px; text-align: left; }
@@ -29,7 +28,6 @@
     .error { color: #ef4444; }
     .hidden { display: none !important; }
 
-    /* Profil Paneli */
     .dashboard { text-align: center; }
     .avatar { width: 80px; height: 80px; background: #f59e0b; color: #0f172a; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; margin: 0 auto 16px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); }
     .user-box { background: #0f172a; padding: 16px; border-radius: 10px; margin-bottom: 20px; text-align: left; border: 1px solid #334155; }
@@ -42,20 +40,18 @@
 <body>
 
   <div class="card">
-    <!-- GİRİŞ / KAYIT KUTUSU -->
     <div id="auth-box">
       <h1>Cizre Ejderi Portal</h1>
-      <p class="subtitle" id="form-subtitle">Devam etmek için giriş yapın veya kayıt olun.</p>
+      <p class="subtitle" id="form-subtitle">Devam etmek için bir işlem seçin.</p>
 
-      <!-- Aktif Sekme Butonları -->
       <div class="mode-selector">
         <button id="tab-login" class="mode-btn active" onclick="switchMode('login')">Giriş Yap</button>
         <button id="tab-register" class="mode-btn" onclick="switchMode('register')">Kayıt Ol</button>
+        <button id="tab-reset" class="mode-btn" onclick="switchMode('reset')">Şifremi Unuttum</button>
       </div>
 
-      <!-- FORM ALANI -->
       <div id="form-content">
-        <!-- Kayıt Olurken Çıkacak Ekstra Alanlar -->
+        <!-- Kayıt Alanları -->
         <div id="register-inputs" class="hidden">
           <div class="form-group">
             <label for="reg-fullname">Ad Soyad</label>
@@ -68,29 +64,25 @@
         </div>
 
         <div class="form-group">
-          <label for="email-or-user">E-Posta veya Kullanıcı Adı</label>
-          <input type="text" id="email-or-user" placeholder="ornek@mail.com veya kullanıcı adı">
+          <label for="account-id" id="account-label">Kullanıcı Adı veya Telefon</label>
+          <input type="text" id="account-id" placeholder="Kullanıcı adı veya 05xx...">
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="password-group">
           <label for="password">Şifre</label>
           <input type="password" id="password" placeholder="******">
         </div>
 
-        <button class="main-btn" id="submit-btn" onclick="handleAuth()">Devam Et</button>
-      </div>
-
-      <!-- MAİL DOĞRULAMA KUTUSU (Kayıt Aşamasında) -->
-      <div id="verify-box" class="hidden">
-        <div class="form-group">
-          <label for="verification-code">E-Postanıza Gelen 6 Haneli Kod</label>
-          <input type="text" id="verification-code" maxlength="6" placeholder="123456" style="text-align: center; letter-spacing: 6px; font-weight: bold;">
+        <div class="form-group hidden" id="new-password-group">
+          <label for="new-password">Yeni Şifre</label>
+          <input type="password" id="new-password" placeholder="Yeni Şifre Belirleyin">
         </div>
-        <button class="main-btn" onclick="verifyAndCompleteRegister()">Kayıdı Tamamla</button>
+
+        <button class="main-btn" id="submit-btn" onclick="handleAuth()">Giriş Yap</button>
       </div>
     </div>
 
-    <!-- BAŞARILI GİRİŞ PANELİ -->
+    <!-- PROFİL PANELİ -->
     <div id="dashboard-box" class="dashboard hidden">
       <div class="avatar" id="profile-avatar">C</div>
       <h2 style="color: #f59e0b; margin-bottom: 6px;">Hoş Geldin!</h2>
@@ -99,7 +91,7 @@
       <div class="user-box">
         <div>Ad Soyad: <span id="dash-fullname">-</span></div>
         <div>Kullanıcı Adı: <span id="dash-username">-</span></div>
-        <div>E-Posta: <span id="dash-email">-</span></div>
+        <div>Telefon / Hesap: <span id="dash-account">-</span></div>
       </div>
 
       <button class="logout-btn" onclick="logout()">Çıkış Yap</button>
@@ -109,45 +101,58 @@
   </div>
 
   <script>
-    let currentMode = 'login'; // 'login' veya 'register'
-    let pendingCode = '';
-    let pendingUser = {};
+    let currentMode = 'login';
 
     function switchMode(mode) {
       currentMode = mode;
       document.getElementById('status').innerText = '';
-      document.getElementById('verify-box').classList.add('hidden');
-      document.getElementById('form-content').classList.remove('hidden');
-
+      
       const tabLogin = document.getElementById('tab-login');
       const tabRegister = document.getElementById('tab-register');
+      const tabReset = document.getElementById('tab-reset');
+      
       const regInputs = document.getElementById('register-inputs');
+      const passGroup = document.getElementById('password-group');
+      const newPassGroup = document.getElementById('new-password-group');
       const subtitle = document.getElementById('form-subtitle');
       const submitBtn = document.getElementById('submit-btn');
 
+      tabLogin.classList.remove('active');
+      tabRegister.classList.remove('active');
+      tabReset.classList.remove('active');
+
       if (mode === 'login') {
         tabLogin.classList.add('active');
-        tabRegister.classList.remove('active');
         regInputs.classList.add('hidden');
+        passGroup.classList.remove('hidden');
+        newPassGroup.classList.add('hidden');
         subtitle.innerText = 'Hesabınıza giriş yapmak için bilgilerinizi girin.';
         submitBtn.innerText = 'Giriş Yap';
-      } else {
+      } else if (mode === 'register') {
         tabRegister.classList.add('active');
-        tabLogin.classList.remove('active');
         regInputs.classList.remove('hidden');
+        passGroup.classList.remove('hidden');
+        newPassGroup.classList.add('hidden');
         subtitle.innerText = 'Yeni hesap oluşturmak için formu doldurun.';
-        submitBtn.innerText = 'Kayıt Ol ve Kod Gönder';
+        submitBtn.innerText = 'Kayıt Ol';
+      } else if (mode === 'reset') {
+        tabReset.classList.add('active');
+        regInputs.classList.add('hidden');
+        passGroup.classList.add('hidden');
+        newPassGroup.classList.remove('hidden');
+        subtitle.innerText = 'Hesabınızı doğrulamak için kullanıcı adı/telefonunuzu ve yeni şifrenizi girin.';
+        submitBtn.innerText = 'Şifreyi Güncelle';
       }
     }
 
-    async function handleAuth() {
+    function handleAuth() {
       const statusDiv = document.getElementById('status');
-      const inputVal = document.getElementById('email-or-user').value.trim();
+      const accountId = document.getElementById('account-id').value.trim();
       const password = document.getElementById('password').value.trim();
 
-      if (!inputVal || !password) {
+      if (!accountId) {
         statusDiv.className = 'status error';
-        statusDiv.innerText = 'Lütfen tüm alanları doldurun.';
+        statusDiv.innerText = 'Lütfen kullanıcı adı veya telefon alanını doldurun.';
         return;
       }
 
@@ -155,59 +160,60 @@
         const fullname = document.getElementById('reg-fullname').value.trim();
         const username = document.getElementById('reg-username').value.trim();
 
-        if (!fullname || !username) {
+        if (!fullname || !username || !password) {
           statusDiv.className = 'status error';
-          statusDiv.innerText = 'Lütfen Ad Soyad ve Kullanıcı Adı girin.';
+          statusDiv.innerText = 'Lütfen tüm alanları doldurun.';
           return;
         }
 
-        if (!inputVal.includes('@')) {
+        const newUser = { fullname, username, accountId, password };
+        localStorage.setItem('cizre_user', JSON.stringify(newUser));
+
+        statusDiv.className = 'status success';
+        statusDiv.innerText = 'Kayıt başarılı! Giriş yapılıyor...';
+        setTimeout(() => openDashboard(newUser), 1000);
+
+      } else if (currentMode === 'reset') {
+        const newPassword = document.getElementById('new-password').value.trim();
+        const savedUserJson = localStorage.getItem('cizre_user');
+
+        if (!newPassword) {
           statusDiv.className = 'status error';
-          statusDiv.innerText = 'Kayıt için geçerli bir e-posta adresi girmelisiniz.';
+          statusDiv.innerText = 'Lütfen yeni şifrenizi girin.';
           return;
         }
 
-        // Kullanıcıyı hafızaya al ve şifreyle kaydet
-        pendingUser = { fullname, username, email: inputVal, password };
-        pendingCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-        statusDiv.className = 'status';
-        statusDiv.innerText = 'Doğrulama kodu gönderiliyor...';
-
-        try {
-          const res = await fetch('/api/send-code', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: inputVal, code: pendingCode })
-          });
-          const result = await res.json();
-
-          if (res.ok && result.success) {
-            statusDiv.className = 'status success';
-            statusDiv.innerText = 'Doğrulama kodu e-postanıza gönderildi!';
-            document.getElementById('form-content').classList.add('hidden');
-            document.getElementById('verify-box').classList.remove('hidden');
-          } else {
-            throw new Error(result.error || 'Mail gönderilemedi.');
-          }
-        } catch (err) {
+        if (!savedUserJson) {
           statusDiv.className = 'status error';
-          statusDiv.innerText = err.message;
+          statusDiv.innerText = 'Sistemde kayıtlı hesap bulunamadı.';
+          return;
+        }
+
+        let user = JSON.parse(savedUserJson);
+        if (user.username === accountId || user.accountId === accountId) {
+          user.password = newPassword;
+          localStorage.setItem('cizre_user', JSON.stringify(user));
+
+          statusDiv.className = 'status success';
+          statusDiv.innerText = 'Şifreniz başarıyla güncellendi! Giriş yapabilirsiniz.';
+          switchMode('login');
+        } else {
+          statusDiv.className = 'status error';
+          statusDiv.innerText = 'Bu kullanıcı adına/telefona ait kayıt bulunamadı.';
         }
 
       } else {
-        // GİRİŞ YAPMA İŞLEMİ
+        // GİRİŞ YAP
         const savedUserJson = localStorage.getItem('cizre_user');
+
         if (!savedUserJson) {
-          statusDiv.className.id = 'status error';
-          statusDiv.innerText = 'Kayıtlı kullanıcı bulunamadı. Önce Kayıt Olun!';
+          statusDiv.className = 'status error';
+          statusDiv.innerText = 'Kayıtlı hesap bulunamadı. Önce Kayıt Olun!';
           return;
         }
 
         const user = JSON.parse(savedUserJson);
-
-        // E-posta veya kullanıcı adı + şifre kontrolü
-        const isMatch = (user.email === inputVal || user.username === inputVal) && user.password === password;
+        const isMatch = (user.username === accountId || user.accountId === accountId) && user.password === password;
 
         if (isMatch) {
           statusDiv.className = 'status success';
@@ -215,24 +221,8 @@
           openDashboard(user);
         } else {
           statusDiv.className = 'status error';
-          statusDiv.innerText = 'Hatalı e-posta/kullanıcı adı veya şifre!';
+          statusDiv.innerText = 'Hatalı kullanıcı adı/telefon veya şifre!';
         }
-      }
-    }
-
-    function verifyAndCompleteRegister() {
-      const codeInput = document.getElementById('verification-code').value.trim();
-      const statusDiv = document.getElementById('status');
-
-      if (codeInput === pendingCode) {
-        // Kullanıcıyı tarayıcıya (localStorage) kalıcı olarak kaydet
-        localStorage.setItem('cizre_user', JSON.stringify(pendingUser));
-        statusDiv.className = 'status success';
-        statusDiv.innerText = 'Kayıt başarıyla tamamlandı!';
-        openDashboard(pendingUser);
-      } else {
-        statusDiv.className = 'status error';
-        statusDiv.innerText = 'Hatalı doğrulama kodu!';
       }
     }
 
@@ -243,7 +233,7 @@
 
       document.getElementById('dash-fullname').innerText = user.fullname;
       document.getElementById('dash-username').innerText = '@' + user.username;
-      document.getElementById('dash-email').innerText = user.email;
+      document.getElementById('dash-account').innerText = user.accountId;
       document.getElementById('profile-avatar').innerText = user.fullname.charAt(0).toUpperCase();
     }
 
