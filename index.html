@@ -51,31 +51,34 @@
       </div>
 
       <div id="form-content">
-        <!-- Kayıt Alanları -->
-        <div id="register-inputs" class="hidden">
-          <div class="form-group">
-            <label for="reg-fullname">Ad Soyad</label>
-            <input type="text" id="reg-fullname" placeholder="Ahmet Yılmaz">
-          </div>
-          <div class="form-group">
-            <label for="reg-username">Kullanıcı Adı</label>
-            <input type="text" id="reg-username" placeholder="cizreli73">
-          </div>
+        <!-- Ad Soyad (Sadece Kayıt) -->
+        <div class="form-group hidden" id="group-fullname">
+          <label for="fullname">Ad Soyad</label>
+          <input type="text" id="fullname" placeholder="Ahmet Yılmaz">
         </div>
 
-        <div class="form-group">
-          <label for="account-id" id="account-label">Kullanıcı Adı veya Telefon</label>
-          <input type="text" id="account-id" placeholder="Kullanıcı adı veya 05xx...">
+        <!-- Kullanıcı Adı (Ortak) -->
+        <div class="form-group" id="group-username">
+          <label for="username">Kullanıcı Adı</label>
+          <input type="text" id="username" placeholder="cizreli73">
         </div>
 
-        <div class="form-group" id="password-group">
+        <!-- Telefon Numarası (Kayıt ve Şifre Sıfırlama) -->
+        <div class="form-group hidden" id="group-phone">
+          <label for="phone">Telefon Numarası</label>
+          <input type="text" id="phone" placeholder="05xxxxxxxxx">
+        </div>
+
+        <!-- Şifre (Giriş ve Kayıt) -->
+        <div class="form-group" id="group-password">
           <label for="password">Şifre</label>
           <input type="password" id="password" placeholder="******">
         </div>
 
-        <div class="form-group hidden" id="new-password-group">
+        <!-- Yeni Şifre (Şifremi Unuttum) -->
+        <div class="form-group hidden" id="group-new-password">
           <label for="new-password">Yeni Şifre</label>
-          <input type="password" id="new-password" placeholder="Yeni Şifre Belirleyin">
+          <input type="password" id="new-password" placeholder="Yeni Şifrenizi Girin">
         </div>
 
         <button class="main-btn" id="submit-btn" onclick="handleAuth()">Giriş Yap</button>
@@ -91,7 +94,7 @@
       <div class="user-box">
         <div>Ad Soyad: <span id="dash-fullname">-</span></div>
         <div>Kullanıcı Adı: <span id="dash-username">-</span></div>
-        <div>Telefon / Hesap: <span id="dash-account">-</span></div>
+        <div>Telefon: <span id="dash-phone">-</span></div>
       </div>
 
       <button class="logout-btn" onclick="logout()">Çıkış Yap</button>
@@ -111,9 +114,12 @@
       const tabRegister = document.getElementById('tab-register');
       const tabReset = document.getElementById('tab-reset');
       
-      const regInputs = document.getElementById('register-inputs');
-      const passGroup = document.getElementById('password-group');
-      const newPassGroup = document.getElementById('new-password-group');
+      const gFullname = document.getElementById('group-fullname');
+      const gUsername = document.getElementById('group-username');
+      const gPhone = document.getElementById('group-phone');
+      const gPassword = document.getElementById('group-password');
+      const gNewPassword = document.getElementById('group-new-password');
+      
       const subtitle = document.getElementById('form-subtitle');
       const submitBtn = document.getElementById('submit-btn');
 
@@ -123,50 +129,50 @@
 
       if (mode === 'login') {
         tabLogin.classList.add('active');
-        regInputs.classList.add('hidden');
-        passGroup.classList.remove('hidden');
-        newPassGroup.classList.add('hidden');
+        gFullname.classList.add('hidden');
+        gUsername.classList.remove('hidden');
+        gPhone.classList.add('hidden');
+        gPassword.classList.remove('hidden');
+        gNewPassword.classList.add('hidden');
         subtitle.innerText = 'Hesabınıza giriş yapmak için bilgilerinizi girin.';
         submitBtn.innerText = 'Giriş Yap';
       } else if (mode === 'register') {
         tabRegister.classList.add('active');
-        regInputs.classList.remove('hidden');
-        passGroup.classList.remove('hidden');
-        newPassGroup.classList.add('hidden');
+        gFullname.classList.remove('hidden');
+        gUsername.classList.remove('hidden');
+        gPhone.classList.remove('hidden');
+        gPassword.classList.remove('hidden');
+        gNewPassword.classList.add('hidden');
         subtitle.innerText = 'Yeni hesap oluşturmak için formu doldurun.';
         submitBtn.innerText = 'Kayıt Ol';
       } else if (mode === 'reset') {
         tabReset.classList.add('active');
-        regInputs.classList.add('hidden');
-        passGroup.classList.add('hidden');
-        newPassGroup.classList.remove('hidden');
-        subtitle.innerText = 'Hesabınızı doğrulamak için kullanıcı adı/telefonunuzu ve yeni şifrenizi girin.';
+        gFullname.classList.add('hidden');
+        gUsername.classList.remove('hidden');
+        gPhone.classList.remove('hidden');
+        gPassword.classList.add('hidden');
+        gNewPassword.classList.remove('hidden');
+        subtitle.innerText = 'Kullanıcı adı ve kayıtlı telefon numaranızı girerek şifrenizi yenileyin.';
         submitBtn.innerText = 'Şifreyi Güncelle';
       }
     }
 
     function handleAuth() {
       const statusDiv = document.getElementById('status');
-      const accountId = document.getElementById('account-id').value.trim();
-      const password = document.getElementById('password').value.trim();
-
-      if (!accountId) {
-        statusDiv.className = 'status error';
-        statusDiv.innerText = 'Lütfen kullanıcı adı veya telefon alanını doldurun.';
-        return;
-      }
 
       if (currentMode === 'register') {
-        const fullname = document.getElementById('reg-fullname').value.trim();
-        const username = document.getElementById('reg-username').value.trim();
+        const fullname = document.getElementById('fullname').value.trim();
+        const username = document.getElementById('username').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const password = document.getElementById('password').value.trim();
 
-        if (!fullname || !username || !password) {
+        if (!fullname || !username || !phone || !password) {
           statusDiv.className = 'status error';
           statusDiv.innerText = 'Lütfen tüm alanları doldurun.';
           return;
         }
 
-        const newUser = { fullname, username, accountId, password };
+        const newUser = { fullname, username, phone, password };
         localStorage.setItem('cizre_user', JSON.stringify(newUser));
 
         statusDiv.className = 'status success';
@@ -174,12 +180,14 @@
         setTimeout(() => openDashboard(newUser), 1000);
 
       } else if (currentMode === 'reset') {
+        const username = document.getElementById('username').value.trim();
+        const phone = document.getElementById('phone').value.trim();
         const newPassword = document.getElementById('new-password').value.trim();
         const savedUserJson = localStorage.getItem('cizre_user');
 
-        if (!newPassword) {
+        if (!username || !phone || !newPassword) {
           statusDiv.className = 'status error';
-          statusDiv.innerText = 'Lütfen yeni şifrenizi girin.';
+          statusDiv.innerText = 'Lütfen Kullanıcı Adı, Telefon ve Yeni Şifreyi girin.';
           return;
         }
 
@@ -190,21 +198,30 @@
         }
 
         let user = JSON.parse(savedUserJson);
-        if (user.username === accountId || user.accountId === accountId) {
+        // Güvenlik Kontrolü: Hem kullanıcı adı hem de telefon birebir eşleşmeli
+        if (user.username === username && user.phone === phone) {
           user.password = newPassword;
           localStorage.setItem('cizre_user', JSON.stringify(user));
 
           statusDiv.className = 'status success';
-          statusDiv.innerText = 'Şifreniz başarıyla güncellendi! Giriş yapabilirsiniz.';
+          statusDiv.innerText = 'Şifreniz güncellendi! Yeni şifrenizle giriş yapabilirsiniz.';
           switchMode('login');
         } else {
           statusDiv.className = 'status error';
-          statusDiv.innerText = 'Bu kullanıcı adına/telefona ait kayıt bulunamadı.';
+          statusDiv.innerText = 'Kullanıcı adı ile telefon numarası eşleşmiyor!';
         }
 
       } else {
         // GİRİŞ YAP
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
         const savedUserJson = localStorage.getItem('cizre_user');
+
+        if (!username || !password) {
+          statusDiv.className = 'status error';
+          statusDiv.innerText = 'Kullanıcı adı ve şifrenizi girin.';
+          return;
+        }
 
         if (!savedUserJson) {
           statusDiv.className = 'status error';
@@ -213,15 +230,13 @@
         }
 
         const user = JSON.parse(savedUserJson);
-        const isMatch = (user.username === accountId || user.accountId === accountId) && user.password === password;
-
-        if (isMatch) {
+        if (user.username === username && user.password === password) {
           statusDiv.className = 'status success';
           statusDiv.innerText = 'Giriş başarılı!';
           openDashboard(user);
         } else {
           statusDiv.className = 'status error';
-          statusDiv.innerText = 'Hatalı kullanıcı adı/telefon veya şifre!';
+          statusDiv.innerText = 'Hatalı kullanıcı adı veya şifre!';
         }
       }
     }
@@ -233,7 +248,7 @@
 
       document.getElementById('dash-fullname').innerText = user.fullname;
       document.getElementById('dash-username').innerText = '@' + user.username;
-      document.getElementById('dash-account').innerText = user.accountId;
+      document.getElementById('dash-phone').innerText = user.phone;
       document.getElementById('profile-avatar').innerText = user.fullname.charAt(0).toUpperCase();
     }
 
