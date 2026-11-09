@@ -3,146 +3,111 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hoş Geldiniz | Web Sitem</title>
+  <title>Cizre Ejderi - Giriş & Doğrulama</title>
   <style>
-    :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --accent: #38bdf8;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    header {
-      padding: 2rem 1rem;
-      text-align: center;
-      background: linear-gradient(180deg, rgba(56,189,248,0.1) 0%, rgba(15,23,42,0) 100%);
-    }
-
-    header h1 {
-      font-size: 2.5rem;
-      color: var(--accent);
-      margin-bottom: 0.5rem;
-    }
-
-    header p {
-      color: var(--text-muted);
-      font-size: 1.1rem;
-    }
-
-    main {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 2rem 1rem;
-      flex: 1;
-      width: 100%;
-    }
-
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-
-    .card {
-      background: var(--card-bg);
-      padding: 1.5rem;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      transition: transform 0.2s, border-color 0.2s;
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      border-color: var(--accent);
-    }
-
-    .card h3 {
-      color: var(--accent);
-      margin-bottom: 0.5rem;
-    }
-
-    .btn {
-      display: inline-block;
-      margin-top: 1rem;
-      padding: 0.6rem 1.2rem;
-      background: var(--accent);
-      color: #0f172a;
-      text-decoration: none;
-      font-weight: bold;
-      border-radius: 8px;
-      transition: opacity 0.2s;
-    }
-
-    .btn:hover {
-      opacity: 0.9;
-    }
-
-    footer {
-      text-align: center;
-      padding: 1.5rem;
-      border-top: 1px solid var(--card-bg);
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+    .card { background: #1e293b; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 400px; border: 1px solid #334155; text-align: center; }
+    h1 { color: #f59e0b; margin-bottom: 8px; font-size: 24px; }
+    p { color: #94a3b8; font-size: 14px; margin-bottom: 24px; }
+    .form-group { margin-bottom: 16px; text-align: left; }
+    label { display: block; font-size: 12px; color: #cbd5e1; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 15px; outline: none; transition: 0.3s; }
+    input:focus { border-color: #f59e0b; box-shadow: 0 0 8px rgba(245, 158, 11, 0.3); }
+    button { width: 100%; padding: 12px; border: none; border-radius: 8px; background: #f59e0b; color: #0f172a; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 8px; }
+    button:hover { background: #d97706; }
+    button:disabled { background: #475569; cursor: not-allowed; }
+    .status { margin-top: 16px; font-size: 14px; min-height: 20px; }
+    .success { color: #10b981; }
+    .error { color: #ef4444; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>Web Siteme Hoş Geldiniz</h1>
-    <p>Dijital projeler, içerikler ve güncel çalışmalar.</p>
-  </header>
+  <div class="card">
+    <h1>Cizre Ejderi Portal</h1>
+    <p>Doğrulama kodu almak için e-posta adresinizi girin.</p>
 
-  <main>
-    <section>
-      <h2>Hakkımda</h2>
-      <p style="margin-top: 0.5rem; color: var(--text-muted);">
-        Yeni teknolojiler, dijital içerikler ve yaratıcı projeler geliştirmeye odaklanıyorum.
-      </p>
-    </section>
-
-    <div class="card-grid">
-      <div class="card">
-        <h3>🚀 Proje 1</h3>
-        <p>Geliştirdiğim dijital uygulamalar ve güncel yazılım projeleri.</p>
-        <a href="#" class="btn">İncele</a>
+    <!-- STEP 1: EMAIL INPUT -->
+    <div id="step-email">
+      <div class="form-group">
+        <label for="email">E-Posta Adresi</label>
+        <input type="email" id="email" placeholder="ornek@mail.com" required>
       </div>
-
-      <div class="card">
-        <h3>🎵 İçerik & Müzik</h3>
-        <p>Üretilen içerikler, yapay zeka projeleri ve dijital tasarımlar.</p>
-        <a href="#" class="btn">Detaylar</a>
-      </div>
-
-      <div class="card">
-        <h3>📬 İletişim</h3>
-        <p>Benimle iletişime geçmek veya projeler hakkında bilgi almak için.</p>
-        <a href="#" class="btn">Bana Ulaş</a>
-      </div>
+      <button id="send-btn" onclick="sendCode()">Kod Gönder</button>
     </div>
-  </main>
 
-  <footer>
-    <p>&copy; 2026 Tüm Hakları Saklıdır.</p>
-  </footer>
+    <!-- STEP 2: CODE VERIFICATION -->
+    <div id="step-code" class="hidden">
+      <div class="form-group">
+        <label for="code">6 Haneli Doğrulama Kodu</label>
+        <input type="text" id="code" maxlength="6" placeholder="123456" required style="text-align: center; letter-spacing: 4px; font-weight: bold;">
+      </div>
+      <button id="verify-btn" onclick="verifyCode()">Giriş Yap</button>
+    </div>
 
+    <div id="status" class="status"></div>
+  </div>
+
+  <script>
+    let generatedCode = '';
+    let targetEmail = '';
+
+    async function sendCode() {
+      const emailInput = document.getElementById('email').value.trim();
+      const statusDiv = document.getElementById('status');
+      const sendBtn = document.getElementById('send-btn');
+
+      if (!emailInput || !emailInput.includes('@')) {
+        statusDiv.className = 'status error';
+        statusDiv.innerText = 'Lütfen geçerli bir e-posta girin.';
+        return;
+      }
+
+      targetEmail = emailInput;
+      generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+      statusDiv.className = 'status';
+      statusDiv.innerText = 'Kod gönderiliyor...';
+      sendBtn.disabled = true;
+
+      try {
+        const response = await fetch('/api/send-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: targetEmail, code: generatedCode })
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          statusDiv.className = 'status success';
+          statusDiv.innerText = 'Doğrulama kodu e-posta adresinize gönderildi!';
+          document.getElementById('step-email').classList.add('hidden');
+          document.getElementById('step-code').classList.remove('hidden');
+        } else {
+          throw new Error(result.error || 'Mail gönderimi başarısız.');
+        }
+      } catch (err) {
+        statusDiv.className = 'status error';
+        statusDiv.innerText = err.message;
+        sendBtn.disabled = false;
+      }
+    }
+
+    function verifyCode() {
+      const inputCode = document.getElementById('code').value.trim();
+      const statusDiv = document.getElementById('status');
+
+      if (inputCode === generatedCode) {
+        statusDiv.className = 'status success';
+        statusDiv.innerText = 'Giriş başarılı! Cizre Ejderi sistemine hoş geldiniz.';
+      } else {
+        statusDiv.className = 'status error';
+        statusDiv.innerText = 'Hatalı kod! Lütfen tekrar kontrol edin.';
+      }
+    }
+  </script>
 </body>
 </html>
