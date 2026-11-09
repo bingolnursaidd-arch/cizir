@@ -3,111 +3,147 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cizre Ejderi - Giriş & Doğrulama</title>
+  <title>Cizre Ejderi - Giriş & Kayıt Panel</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-    .card { background: #1e293b; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 400px; border: 1px solid #334155; text-align: center; }
-    h1 { color: #f59e0b; margin-bottom: 8px; font-size: 24px; }
-    p { color: #94a3b8; font-size: 14px; margin-bottom: 24px; }
-    .form-group { margin-bottom: 16px; text-align: left; }
+    .card { background: #1e293b; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 100%; max-width: 420px; border: 1px solid #334155; }
+    h1 { color: #f59e0b; margin-bottom: 8px; font-size: 24px; text-align: center; }
+    p.subtitle { color: #94a3b8; font-size: 14px; margin-bottom: 20px; text-align: center; }
+    
+    /* Tabs */
+    .tabs { display: flex; gap: 8px; margin-bottom: 20px; background: #0f172a; padding: 4px; border-radius: 8px; }
+    .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; color: #94a3b8; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.3s; }
+    .tab-btn.active { background: #f59e0b; color: #0f172a; }
+
+    .form-group { margin-bottom: 14px; text-align: left; }
     label { display: block; font-size: 12px; color: #cbd5e1; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-    input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 15px; outline: none; transition: 0.3s; }
+    input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 14px; outline: none; transition: 0.3s; }
     input:focus { border-color: #f59e0b; box-shadow: 0 0 8px rgba(245, 158, 11, 0.3); }
-    button { width: 100%; padding: 12px; border: none; border-radius: 8px; background: #f59e0b; color: #0f172a; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 8px; }
-    button:hover { background: #d97706; }
-    button:disabled { background: #475569; cursor: not-allowed; }
-    .status { margin-top: 16px; font-size: 14px; min-height: 20px; }
+    
+    button.action-btn { width: 100%; padding: 12px; border: none; border-radius: 8px; background: #f59e0b; color: #0f172a; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 8px; }
+    button.action-btn:hover { background: #d97706; }
+    button.action-btn:disabled { background: #475569; cursor: not-allowed; }
+    
+    .status { margin-top: 16px; font-size: 14px; text-align: center; min-height: 20px; }
     .success { color: #10b981; }
     .error { color: #ef4444; }
-    .hidden { display: none; }
+    .hidden { display: none !important; }
+
+    /* Dashboard UI */
+    .dashboard { text-align: center; }
+    .avatar { width: 80px; height: 80px; background: #f59e0b; color: #0f172a; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; margin: 0 auto 16px; }
+    .user-info { background: #0f172a; padding: 16px; border-radius: 8px; margin-bottom: 20px; text-align: left; border: 1px solid #334155; }
+    .user-info div { margin-bottom: 8px; font-size: 14px; }
+    .user-info span { color: #f59e0b; font-weight: bold; }
+    .logout-btn { background: #ef4444; color: white; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; }
   </style>
 </head>
 <body>
 
   <div class="card">
-    <h1>Cizre Ejderi Portal</h1>
-    <p>Doğrulama kodu almak için e-posta adresinizi girin.</p>
+    <!-- AUTH CONTAINER -->
+    <div id="auth-container">
+      <h1>Cizre Ejderi Portal</h1>
+      <p class="subtitle">Devam etmek için giriş yapın veya kayıt olun.</p>
 
-    <!-- STEP 1: EMAIL INPUT -->
-    <div id="step-email">
-      <div class="form-group">
-        <label for="email">E-Posta Adresi</label>
-        <input type="email" id="email" placeholder="ornek@mail.com" required>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('login')">Giriş Yap</button>
+        <button class="tab-btn" onclick="switchTab('register')">Kayıt Ol</button>
       </div>
-      <button id="send-btn" onclick="sendCode()">Kod Gönder</button>
+
+      <!-- STEP 1: FORM SECTIONS -->
+      <div id="form-section">
+        <!-- REGISTRATION FORM -->
+        <div id="register-fields" class="hidden">
+          <div class="form-group">
+            <label for="fullname">Ad Soyad</label>
+            <input type="text" id="fullname" placeholder="Ahmet Yılmaz">
+          </div>
+          <div class="form-group">
+            <label for="username">Kullanıcı Adı</label>
+            <input type="text" id="username" placeholder="cizreli73">
+          </div>
+        </div>
+
+        <!-- EMAIL INPUT (COMMON) -->
+        <div class="form-group">
+          <label for="email">E-Posta Adresi</label>
+          <input type="email" id="email" placeholder="ornek@mail.com" required>
+        </div>
+
+        <button id="send-btn" class="action-btn" onclick="sendCode()">Doğrulama Kodu Gönder</button>
+      </div>
+
+      <!-- STEP 2: CODE VERIFICATION -->
+      <div id="verify-section" class="hidden">
+        <div class="form-group">
+          <label for="code">6 Haneli Doğrulama Kodu</label>
+          <input type="text" id="code" maxlength="6" placeholder="123456" style="text-align: center; letter-spacing: 4px; font-weight: bold;">
+        </div>
+        <button id="verify-btn" class="action-btn" onclick="verifyAndLogin()">Giriş Yap ve Doğrula</button>
+      </div>
     </div>
 
-    <!-- STEP 2: CODE VERIFICATION -->
-    <div id="step-code" class="hidden">
-      <div class="form-group">
-        <label for="code">6 Haneli Doğrulama Kodu</label>
-        <input type="text" id="code" maxlength="6" placeholder="123456" required style="text-align: center; letter-spacing: 4px; font-weight: bold;">
+    <!-- DASHBOARD CONTAINER (AFTER LOGIN) -->
+    <div id="dashboard-container" class="dashboard hidden">
+      <div class="avatar" id="dash-avatar">C</div>
+      <h2>Hoş Geldin!</h2>
+      <p class="subtitle" style="margin-bottom: 16px;">Cizre Ejderi sistemine başarıyla giriş yaptın.</p>
+      
+      <div class="user-info">
+        <div>Ad Soyad: <span id="dash-fullname">-</span></div>
+        <div>Kullanıcı Adı: <span id="dash-username">-</span></div>
+        <div>E-Posta: <span id="dash-email">-</span></div>
       </div>
-      <button id="verify-btn" onclick="verifyCode()">Giriş Yap</button>
+
+      <button class="logout-btn" onclick="logout()">Çıkış Yap</button>
     </div>
 
     <div id="status" class="status"></div>
   </div>
 
   <script>
+    let currentMode = 'login'; // 'login' or 'register'
     let generatedCode = '';
-    let targetEmail = '';
+    let userData = {};
+
+    function switchTab(mode) {
+      currentMode = mode;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('status').innerText = '';
+
+      if (mode === 'register') {
+        event.target.classList.add('active');
+        document.getElementById('register-fields').classList.remove('hidden');
+      } else {
+        event.target.classList.add('active');
+        document.getElementById('register-fields').classList.add('hidden');
+      }
+    }
 
     async function sendCode() {
-      const emailInput = document.getElementById('email').value.trim();
+      const email = document.getElementById('email').value.trim();
       const statusDiv = document.getElementById('status');
       const sendBtn = document.getElementById('send-btn');
 
-      if (!emailInput || !emailInput.includes('@')) {
+      if (!email || !email.includes('@')) {
         statusDiv.className = 'status error';
-        statusDiv.innerText = 'Lütfen geçerli bir e-posta girin.';
+        statusDiv.innerText = 'Geçerli bir e-posta adresi girin.';
         return;
       }
 
-      targetEmail = emailInput;
-      generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-      statusDiv.className = 'status';
-      statusDiv.innerText = 'Kod gönderiliyor...';
-      sendBtn.disabled = true;
-
-      try {
-        const response = await fetch('/api/send-code', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: targetEmail, code: generatedCode })
-        });
-
-        const result = await response.json();
-
-        if (response.ok && result.success) {
-          statusDiv.className = 'status success';
-          statusDiv.innerText = 'Doğrulama kodu e-posta adresinize gönderildi!';
-          document.getElementById('step-email').classList.add('hidden');
-          document.getElementById('step-code').classList.remove('hidden');
-        } else {
-          throw new Error(result.error || 'Mail gönderimi başarısız.');
+      if (currentMode === 'register') {
+        const fullname = document.getElementById('fullname').value.trim();
+        const username = document.getElementById('username').value.trim();
+        if (!fullname || !username) {
+          statusDiv.className = 'status error';
+          statusDiv.innerText = 'Lütfen Ad Soyad ve Kullanıcı Adı alanlarını doldurun.';
+          return;
         }
-      } catch (err) {
-        statusDiv.className = 'status error';
-        statusDiv.innerText = err.message;
-        sendBtn.disabled = false;
-      }
-    }
-
-    function verifyCode() {
-      const inputCode = document.getElementById('code').value.trim();
-      const statusDiv = document.getElementById('status');
-
-      if (inputCode === generatedCode) {
-        statusDiv.className = 'status success';
-        statusDiv.innerText = 'Giriş başarılı! Cizre Ejderi sistemine hoş geldiniz.';
+        userData = { fullname, username, email };
       } else {
-        statusDiv.className = 'status error';
-        statusDiv.innerText = 'Hatalı kod! Lütfen tekrar kontrol edin.';
+        userData = { fullname: 'Kullanıcı', username: email.split('@')[0], email };
       }
-    }
-  </script>
-</body>
-</html>
+
+      generatedCode = Math.floor(100
