@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hoş Geldiniz | Web Sitem</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #38bdf8;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 2rem 1rem;
+      text-align: center;
+      background: linear-gradient(180deg, rgba(56,189,248,0.1) 0%, rgba(15,23,42,0) 100%);
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      flex: 1;
+      width: 100%;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+    }
+
+    .card h3 {
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.6rem 1.2rem;
+      background: var(--accent);
+      color: #0f172a;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 8px;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      border-top: 1px solid var(--card-bg);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Web Siteme Hoş Geldiniz</h1>
+    <p>Dijital projeler, içerikler ve güncel çalışmalar.</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Hakkımda</h2>
+      <p style="margin-top: 0.5rem; color: var(--text-muted);">
+        Yeni teknolojiler, dijital içerikler ve yaratıcı projeler geliştirmeye odaklanıyorum.
+      </p>
+    </section>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>🚀 Proje 1</h3>
+        <p>Geliştirdiğim dijital uygulamalar ve güncel yazılım projeleri.</p>
+        <a href="#" class="btn">İncele</a>
+      </div>
+
+      <div class="card">
+        <h3>🎵 İçerik & Müzik</h3>
+        <p>Üretilen içerikler, yapay zeka projeleri ve dijital tasarımlar.</p>
+        <a href="#" class="btn">Detaylar</a>
+      </div>
+
+      <div class="card">
+        <h3>📬 İletişim</h3>
+        <p>Benimle iletişime geçmek veya projeler hakkında bilgi almak için.</p>
+        <a href="#" class="btn">Bana Ulaş</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Tüm Hakları Saklıdır.</p>
+  </footer>
+
+</body>
+</html>
