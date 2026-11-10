@@ -3,224 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CizirApp - Giriş ve Kayıt Portalı</title>
+    <title>CizirApp - Sosyal Medya</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome İkonlar -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
         (function() {
-            emailjs.init("ta2-lmkLSSSdFnU7U"); // Public Key
+            emailjs.init("ta2-lmkLSSSdFnU7U");
         })();
     </script>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans flex flex-col md:flex-row">
 
-    <div class="w-full max-w-md bg-slate-800 rounded-2xl shadow-xl p-8 border border-slate-700">
-        <!-- Logo & Header -->
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-extrabold text-amber-500 tracking-wider">CizirApp</h1>
-            <p class="text-sm text-slate-400 mt-1">Bölgenin Sosyal Medya Platformu</p>
-        </div>
-
-        <!-- Tab Menü -->
-        <div class="flex border-b border-slate-700 mb-6">
-            <button onclick="switchTab('login')" id="btn-login" class="flex-1 pb-3 text-center font-semibold border-b-2 border-amber-500 text-amber-500 transition">Giriş Yap</button>
-            <button onclick="switchTab('register')" id="btn-register" class="flex-1 pb-3 text-center font-semibold text-slate-400 hover:text-slate-200 transition">Kayıt Ol</button>
-            <button onclick="switchTab('forgot')" id="btn-forgot" class="flex-1 pb-3 text-center font-semibold text-slate-400 hover:text-slate-200 transition">Şifremi Unuttum</button>
-        </div>
-
-        <!-- Bildirim Alanı -->
-        <div id="alert-box" class="hidden mb-4 p-3 rounded-lg text-sm text-center"></div>
-
-        <!-- GİRİŞ YAP FORMU -->
-        <div id="form-login" class="space-y-4">
-            <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1">E-posta Adresi</label>
-                <input type="email" id="login-email" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500" placeholder="ornek@gmail.com">
+    <!-- ATHENTICATION / GİRİŞ-KAYIT EKRANI -->
+    <div id="auth-screen" class="w-full min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-slate-900 rounded-2xl shadow-xl p-8 border border-slate-800">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-extrabold text-amber-500 tracking-wider">CizirApp</h1>
+                <p class="text-sm text-slate-400 mt-1">Bölgenin Sosyal Medya Platformu</p>
             </div>
-            <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1">Şifre</label>
-                <input type="password" id="login-password" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500" placeholder="••••••••">
+
+            <div class="flex border-b border-slate-800 mb-6">
+                <button onclick="switchAuthTab('login')" id="btn-login" class="flex-1 pb-3 text-center font-semibold border-b-2 border-amber-500 text-amber-500 transition">Giriş Yap</button>
+                <button onclick="switchAuthTab('register')" id="btn-register" class="flex-1 pb-3 text-center font-semibold text-slate-400 hover:text-slate-200 transition">Kayıt Ol</button>
             </div>
-            <button onclick="handleLogin()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-lg transition shadow-lg">Giriş Yap</button>
-        </div>
 
-        <!-- KAYIT OL FORMU -->
-        <div id="form-register" class="space-y-4 hidden">
-            <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1">Ad Soyad</label>
-                <input type="text" id="reg-name" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500" placeholder="Said Bingöl">
+            <div id="alert-box" class="hidden mb-4 p-3 rounded-lg text-sm text-center"></div>
+
+            <!-- GİRİŞ -->
+            <div id="form-login" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">E-posta</label>
+                    <input type="email" id="login-email" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500" placeholder="ornek@gmail.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Şifre</label>
+                    <input type="password" id="login-password" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500" placeholder="••••••••">
+                </div>
+                <button onclick="handleLogin()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-lg transition">Giriş Yap</button>
             </div>
-            <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1">E-posta Adresi</label>
-                <input type="email" id="reg-email" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500" placeholder="ornek@gmail.com">
-            </div>
-            <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1">Şifre</label>
-                <input type="password" id="reg-password" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500" placeholder="••••••••">
-            </div>
-            <button onclick="startRegistration()" id="btn-send-code" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-lg transition shadow-lg">Doğrulama Kodu Gönder</button>
-            
-            <!-- Kod Doğrulama Adımı -->
-            <div id="register-verify-section" class="hidden space-y-3 pt-3 border-t border-slate-700">
-                <p class="text-xs text-amber-400 text-center">E-postanıza gönderilen 6 haneli doğrulama kodunu girin:</p>
-                <input type="text" id="reg-code-input" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-center text-lg tracking-widest font-mono focus:outline-none focus:border-amber-500" placeholder="123456" maxlength="6">
-                <button onclick="verifyAndRegister()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg transition shadow-lg">Kodu Onayla ve Kaydol</button>
-            </div>
-        </div>
 
-        <!-- ŞİFREMİ UNUTTUM FORMU -->
-        <div id="form-forgot" class="space-y-4 hidden">
-            <div>
-                <label class="block text-xs font-medium text-slate-400 mb-1">Kayıtlı E-posta Adresiniz</label>
-                <input type="email" id="forgot-email" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500" placeholder="ornek@gmail.com">
-            </div>
-            <button onclick="sendResetCode()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-lg transition shadow-lg">Şifre Sıfırlama Kodu Gönder</button>
-
-            <!-- Yeni Şifre Belirleme -->
-            <div id="forgot-verify-section" class="hidden space-y-3 pt-3 border-t border-slate-700">
-                <input type="text" id="forgot-code-input" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-center text-lg tracking-widest font-mono focus:outline-none focus:border-amber-500" placeholder="Kod (6 hane)" maxlength="6">
-                <input type="password" id="new-password" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500" placeholder="Yeni Şifreniz">
-                <button onclick="resetPasswordConfirm()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-lg transition shadow-lg">Şifreyi Güncelle</button>
-            </div>
-        </div>
-
-    </div>
-
-    <script>
-        const SERVICE_ID = "service_i7ac0il";
-        const TEMPLATE_ID = "template_z4ekahm";
-
-        let generatedCode = "";
-        let tempUserData = {};
-
-        function showAlert(message, type = "success") {
-            const box = document.getElementById("alert-box");
-            box.textContent = message;
-            box.className = `mb-4 p-3 rounded-lg text-sm text-center ${type === 'success' ? 'bg-emerald-900/50 text-emerald-300 border border-emerald-700' : 'bg-rose-900/50 text-rose-300 border border-rose-700'}`;
-            box.classList.remove("hidden");
-            setTimeout(() => box.classList.add("hidden"), 5000);
-        }
-
-        function switchTab(tab) {
-            ['login', 'register', 'forgot'].forEach(t => {
-                document.getElementById(`form-${t}`).classList.add('hidden');
-                document.getElementById(`btn-${t}`).className = "flex-1 pb-3 text-center font-semibold text-slate-400 hover:text-slate-200 transition border-b-2 border-transparent";
-            });
-            document.getElementById(`form-${tab}`).classList.remove('hidden');
-            document.getElementById(`btn-${tab}`).className = "flex-1 pb-3 text-center font-semibold border-b-2 border-amber-500 text-amber-500 transition";
-        }
-
-        // Kayıt Ol - Kod Gönderme
-        function startRegistration() {
-            const name = document.getElementById("reg-name").value.trim();
-            const email = document.getElementById("reg-email").value.trim();
-            const password = document.getElementById("reg-password").value.trim();
-
-            if (!name || !email || !password) {
-                showAlert("Lütfen tüm alanları doldurun!", "error");
-                return;
-            }
-
-            generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
-            tempUserData = { name, email, password };
-
-            showAlert("Doğrulama kodu gönderiliyor...", "success");
-
-            emailjs.send(SERVICE_ID, TEMPLATE_ID, {
-                email: email,
-                code: generatedCode,
-                to_name: name
-            }).then(() => {
-                showAlert("Doğrulama kodu e-postanıza gönderildi!");
-                document.getElementById("register-verify-section").classList.remove("hidden");
-                document.getElementById("btn-send-code").classList.add("hidden");
-            }, (error) => {
-                showAlert("Kod gönderilemedi: " + JSON.stringify(error), "error");
-            });
-        }
-
-        // Kayıt Ol - Kodu Doğrulama ve Tamamlama
-        function verifyAndRegister() {
-            const enteredCode = document.getElementById("reg-code-input").value.trim();
-            if (enteredCode === generatedCode) {
-                let users = JSON.parse(localStorage.getItem("cizre_users") || "[]");
-                if (users.some(u => u.email === tempUserData.email)) {
-                    showAlert("Bu e-posta zaten kayıtlı!", "error");
-                    return;
-                }
-                users.push(tempUserData);
-                localStorage.setItem("cizre_users", JSON.stringify(users));
-                localStorage.setItem("cizre_user", JSON.stringify(tempUserData));
-                showAlert("Kayıt başarılı! Yönlendiriliyorsunuz...");
-                setTimeout(() => window.location.reload(), 1500);
-            } else {
-                showAlert("Hatalı doğrulama kodu!", "error");
-            }
-        }
-
-        // Giriş Yap
-        function handleLogin() {
-            const email = document.getElementById("login-email").value.trim();
-            const password = document.getElementById("login-password").value.trim();
-
-            let users = JSON.parse(localStorage.getItem("cizre_users") || "[]");
-            const user = users.find(u => u.email === email && u.password === password);
-
-            if (user) {
-                localStorage.setItem("cizre_user", JSON.stringify(user));
-                showAlert("Giriş başarılı, hoş geldin " + user.name + "!");
-                setTimeout(() => window.location.reload(), 1500);
-            } else {
-                showAlert("E-posta veya şifre hatalı!", "error");
-            }
-        }
-
-        // Şifremi Unuttum - Kod Gönderme
-        function sendResetCode() {
-            const email = document.getElementById("forgot-email").value.trim();
-            let users = JSON.parse(localStorage.getItem("cizre_users") || "[]");
-            const user = users.find(u => u.email === email);
-
-            if (!user) {
-                showAlert("Bu e-posta ile kayıtlı kullanıcı bulunamadı!", "error");
-                return;
-            }
-
-            generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
-            tempUserData = { email };
-
-            emailjs.send(SERVICE_ID, TEMPLATE_ID, {
-                email: email,
-                code: generatedCode,
-                to_name: user.name
-            }).then(() => {
-                showAlert("Şifre sıfırlama kodu gönderildi!");
-                document.getElementById("forgot-verify-section").classList.remove("hidden");
-            }, (error) => {
-                showAlert("Gönderim hatası!", "error");
-            });
-        }
-
-        // Şifre Sıfırlama Onayı
-        function resetPasswordConfirm() {
-            const enteredCode = document.getElementById("forgot-code-input").value.trim();
-            const newPassword = document.getElementById("new-password").value.trim();
-
-            if (enteredCode === generatedCode && newPassword) {
-                let users = JSON.parse(localStorage.getItem("cizre_users") || "[]");
-                users = users.map(u => {
-                    if (u.email === tempUserData.email) u.password = newPassword;
-                    return u;
-                });
-                localStorage.setItem("cizre_users", JSON.stringify(users));
-                showAlert("Şifreniz başarıyla değiştirildi! Giriş yapabilirsiniz.");
-                setTimeout(() => switchTab('login'), 2000);
-            } else {
-                showAlert("Hatalı kod veya boş şifre!", "error");
-            }
-        }
-    </script>
-</body>
-</html>
+            <!-- KAYIT -->
+            <div id="form-register" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Ad Soyad</label>
+                    <input type="text" id="reg-name" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-
